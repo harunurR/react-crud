@@ -1,0 +1,88 @@
+import react, {useState} from 'react';
+import StudentService from '../services/StudentService';
+import {useNavigate} from 'react-router-dom';
+
+
+const AddStudent=()=>{
+	const navigate = useNavigate();
+    const initialStudentState={
+        id:null,
+        student_id:"",
+        name:"",
+        batch_number:""
+    }
+
+    const [student, setStudent]= useState(initialStudentState);
+    const [submitted, setSubmitted]= useState(false);
+
+    const handelInputChange = event =>{
+        const {name, value} =event.target;
+        setStudent({...student,[name]:value});
+    }
+
+    const saveStudent= () =>{
+        var data={
+            student_id:student.student_id,
+            name:student.name,
+            batch_number:student.batch_number,
+        }
+        StudentService.create(data).then(response=>{
+            setStudent({
+                id:response.data.id,
+                student_id:response.data.student_id,
+                name:response.data.name,
+                batch_number:response.data.batch_number
+            });
+			useNavigate('/students');
+            setSubmitted(true);
+			//window.location.replace('http://localhost:3000/students');
+            
+        }).catch(e=>{
+            console.log(e);
+        });
+    }
+    const newStudent=()=>{
+        setStudent(initialStudentState);
+        setSubmitted(false);
+    }
+    return(
+        <div className='form-group'>
+            {submitted ? (
+                <div>
+                    data saved
+                </div>
+            ):(
+                <div>
+                    <div className='form-group'>
+                        <label>Student ID</label>
+                        <input type="text" className='form-control'
+                            value={student.student_id}
+                            onChange={handelInputChange}
+                            name="student_id"
+                            />
+                    </div>
+                    <div className='form-group'>
+                        <label>Student Name</label>
+                        <input type="text" className='form-control'
+                            value={student.name}
+                            onChange={handelInputChange}
+                            name="name"
+                            />
+                    </div>
+                    <div className='form-group'>
+                        <label>Student Batch Number</label>
+                        <input type="text" className='form-control'
+                            value={student.batch_number}
+                            onChange={handelInputChange}
+                            name="batch_number"
+                            />
+                    </div>
+                    <button onClick={saveStudent} className="btn btn-success">Save</button>
+                </div>
+            )}
+
+        </div>
+    );
+};
+
+export default AddStudent;
