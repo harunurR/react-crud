@@ -11,6 +11,8 @@ const Student=()=>{
         StudentService.getAll().then(res=>{
             setStudent(res.data);
         })
+
+        
     }
     const removeStudent=id=>{
         StudentService.destroy(id).then(res=>{
